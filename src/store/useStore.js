@@ -122,14 +122,7 @@ const useStore = create((set, get) => ({
             
             // Load transactions based on user's business type
             const storedTransactions = getDemoTransactions(profile.userType);
-            if (storedTransactions.length === 0) {
-              // If no stored transactions, load default demo data for this business type
-              const defaultTransactions = profile.userType === 'sole_trader' ? DEMO_TRANSACTIONS : DEMO_LANDLORD_TRANSACTIONS;
-              setDemoTransactions(defaultTransactions, profile.userType);
-              set({ transactions: defaultTransactions });
-            } else {
-              set({ transactions: storedTransactions });
-            }
+            set({ transactions: storedTransactions });
           } else if (businessType) {
             // If no profile exists for this business type, create a new one
             const profileData = {
@@ -139,15 +132,16 @@ const useStore = create((set, get) => ({
               createdAt: new Date().toISOString()
             };
             
-            const demoTransactions = businessType === 'sole_trader' ? DEMO_TRANSACTIONS : DEMO_LANDLORD_TRANSACTIONS;
+            // Start with empty transactions for new users
+            const emptyTransactions = [];
             
             setDemoProfile(profileData, businessType);
-            setDemoTransactions(demoTransactions, businessType);
+            setDemoTransactions(emptyTransactions, businessType);
             
             set({ 
               userProfile: profileData, 
               userType: businessType,
-              transactions: demoTransactions
+              transactions: emptyTransactions
             });
           }
         }
@@ -189,17 +183,17 @@ const useStore = create((set, get) => ({
             createdAt: new Date().toISOString()
           };
           
-          // Initialize with demo data
-          const demoTransactions = userType === 'sole_trader' ? DEMO_TRANSACTIONS : DEMO_LANDLORD_TRANSACTIONS;
+          // Initialize with empty transactions
+          const emptyTransactions = [];
           
           setDemoProfile(profileData, userType);
-          setDemoTransactions(demoTransactions, userType);
+          setDemoTransactions(emptyTransactions, userType);
           
           set({ 
             user: demoUser, 
             userProfile: profileData, 
             userType: userType,
-            transactions: demoTransactions,
+            transactions: emptyTransactions,
             loading: false 
           });
         } else {
@@ -324,12 +318,7 @@ const useStore = create((set, get) => ({
         
         // Load transactions for this business type
         let transactions = getDemoTransactions(newBusinessType);
-        if (transactions.length === 0) {
-          // Load default demo data for this business type
-          const defaultTransactions = newBusinessType === 'sole_trader' ? DEMO_TRANSACTIONS : DEMO_LANDLORD_TRANSACTIONS;
-          setDemoTransactions(defaultTransactions, newBusinessType);
-          transactions = defaultTransactions;
-        }
+        // Use existing transactions if any, otherwise start with empty
         
         // Update state
         set({ 
@@ -602,10 +591,11 @@ const useStore = create((set, get) => ({
         if (businessTransactions) {
           set({ transactions: JSON.parse(businessTransactions) });
         } else {
-          // Load default demo data based on business type
-          const defaultTransactions = selectedBusiness.type === 'sole_trader' ? DEMO_TRANSACTIONS : DEMO_LANDLORD_TRANSACTIONS;
-          set({ transactions: defaultTransactions });
-          localStorage.setItem(`mtd-transactions-${businessId}`, JSON.stringify(defaultTransactions));
+          // IMPORTANT: Start with empty transactions for new businesses
+          // This ensures new businesses show £0.00 for all financial metrics
+          // instead of inheriting demo/default transaction data
+          set({ transactions: [] });
+          localStorage.setItem(`mtd-transactions-${businessId}`, JSON.stringify([]));
         }
       }
     }
@@ -684,8 +674,8 @@ const useStore = create((set, get) => ({
           if (businessTransactions) {
             transactions = JSON.parse(businessTransactions);
           } else {
-            // Load default demo data based on business type
-            transactions = currentBusiness.type === 'sole_trader' ? DEMO_TRANSACTIONS : DEMO_LANDLORD_TRANSACTIONS;
+            // Start with empty transactions for new businesses
+            transactions = [];
             localStorage.setItem(`mtd-transactions-${currentBusinessId}`, JSON.stringify(transactions));
           }
           
