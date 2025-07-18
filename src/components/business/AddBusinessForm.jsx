@@ -65,7 +65,7 @@ const AddBusinessForm = ({ isOpen, onClose, businessType = null }) => {
 
   const getTaxYearDescription = (calendarElection) => {
     if (calendarElection) {
-      return 'Calendar Year: 1 January - 31 December (requires HMRC approval for first use)';
+      return 'Calendar Year: 1 April - 31 March (requires HMRC approval for first use)';
     } else {
       return 'Standard UK Tax Year: 6 April - 5 April (most common)';
     }

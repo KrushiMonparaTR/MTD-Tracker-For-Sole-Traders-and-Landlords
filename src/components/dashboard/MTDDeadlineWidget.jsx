@@ -34,27 +34,27 @@ const MTDDeadlineWidget = ({ currentBusiness, currentQuarter }) => {
   const calendarDeadlines = [
     {
       quarter: 'Q1',
-      period: '1 Jan 2025 - 31 Mar 2025',
-      deadline: '2025-05-07',
-      deadlineText: '7 May 2025'
-    },
-    {
-      quarter: 'Q2',
-      period: '1 Apr 2025 - 30 Jun 2025', 
+      period: '1 Apr 2025 - 30 Jun 2025',
       deadline: '2025-08-07',
       deadlineText: '7 August 2025'
     },
     {
-      quarter: 'Q3',
-      period: '1 Jul 2025 - 30 Sep 2025',
-      deadline: '2025-11-07', 
+      quarter: 'Q2',
+      period: '1 Apr 2025 - 30 Sep 2025', 
+      deadline: '2025-11-07',
       deadlineText: '7 November 2025'
     },
     {
-      quarter: 'Q4',
-      period: '1 Oct 2025 - 31 Dec 2025',
-      deadline: '2026-02-07',
+      quarter: 'Q3',
+      period: '1 Apr 2025 - 31 Dec 2025',
+      deadline: '2026-02-07', 
       deadlineText: '7 February 2026'
+    },
+    {
+      quarter: 'Q4',
+      period: '1 Apr 2026 - 31 Mar 2026',
+      deadline: '2026-05-07',
+      deadlineText: '7 May 2026'
     }
   ];
 
