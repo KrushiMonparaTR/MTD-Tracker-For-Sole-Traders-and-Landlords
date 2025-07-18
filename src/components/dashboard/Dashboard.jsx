@@ -5,7 +5,8 @@ import {
   PoundSterling, 
   Calendar,
   FileText,
-  AlertCircle
+  AlertCircle,
+  Building
 } from 'lucide-react';
 import useStore from '../../store/useStore';
 import { formatCurrency, getCurrentQuarter, calculateQuarterSummary } from '../../utils/helpers';
@@ -64,6 +65,17 @@ const Dashboard = () => {
 
   return (
     <div className="space-y-6">
+      {/* No Business State */}
+      {!currentBusiness && businesses.length === 0 && (
+        <div className="bg-slate-800 border border-slate-700 rounded-lg p-8 text-center">
+          <div className="text-slate-400 mb-4">
+            <Building className="h-12 w-12 mx-auto mb-3" />
+            <h3 className="text-lg font-semibold text-white mb-2">No Businesses Found</h3>
+            <p className="text-slate-300">Create your first business to start tracking your MTD transactions.</p>
+          </div>
+        </div>
+      )}
+
       {/* Business Header */}
       {currentBusiness && (
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
@@ -83,53 +95,60 @@ const Dashboard = () => {
         </div>
       )}
 
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-white">Dashboard</h1>
-          <p className="text-slate-300 mt-1">
-            Overview for {currentQuarter.label} • {currentBusiness?.type === 'sole_trader' ? 'Sole Trader' : 'Landlord Business'}
-            {useCalendarElection && <span className="text-blue-400"> • Calendar Election</span>}
-          </p>
-        </div>
-        <div className="mt-4 sm:mt-0 flex items-center space-x-2 text-sm text-slate-400">
-          <Calendar className="h-4 w-4" />
-          <span>{currentQuarter.label}</span>
-        </div>
-      </div>
+      {/* Main Dashboard Content - Only show when businesses exist */}
+      {businesses.length > 0 && (
+        <>
+          {/* Header */}
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-white">Dashboard</h1>
+              <p className="text-slate-300 mt-1">
+                Overview for {currentQuarter.label} • {currentBusiness?.type === 'sole_trader' ? 'Sole Trader' : 'Landlord Business'}
+                {useCalendarElection && <span className="text-blue-400"> • Calendar Election</span>}
+              </p>
+            </div>
+            <div className="mt-4 sm:mt-0 flex items-center space-x-2 text-sm text-slate-400">
+              <Calendar className="h-4 w-4" />
+              <span>{currentQuarter.label}</span>
+            </div>
+          </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {stats.map((stat, index) => (
-          <div key={index} className="bg-slate-800 border border-slate-700 border-l-4 border-l-blue-500 rounded-lg p-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm font-medium text-slate-400">{stat.title}</p>
-                <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {stats.map((stat, index) => (
+              <div key={index} className="bg-slate-800 border border-slate-700 border-l-4 border-l-blue-500 rounded-lg p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm font-medium text-slate-400">{stat.title}</p>
+                    <p className="text-2xl font-bold text-white mt-1">{stat.value}</p>
+                  </div>
+                  <div className="bg-slate-700 text-blue-400 p-3 rounded-full">
+                    <stat.icon className="h-6 w-6" />
+                  </div>
+                </div>
               </div>
-              <div className="bg-slate-700 text-blue-400 p-3 rounded-full">
-                <stat.icon className="h-6 w-6" />
+            ))}
+          </div>
+        </>
+      )}
+
+      {/* Bank Feed Notice - Only show when businesses exist */}
+      {businesses.length > 0 && (
+        <>
+          <div className="bg-amber-900/20 border border-amber-600 rounded-lg p-4">
+            <div className="flex items-start space-x-3">
+              <AlertCircle className="h-5 w-5 text-amber-400 mt-0.5" />
+              <div>
+                <h3 className="font-medium text-amber-200">Bank Feed Integration Coming Soon</h3>
+                <p className="text-sm text-amber-300 mt-1">
+                  Direct bank feed integration is a future enhancement. For now, all transactions are manually entered.
+                  We're working on connecting your bank accounts to automatically import transactions.
+                </p>
               </div>
             </div>
           </div>
-        ))}
-      </div>
 
-      {/* Bank Feed Notice */}
-      <div className="bg-amber-900/20 border border-amber-600 rounded-lg p-4">
-        <div className="flex items-start space-x-3">
-          <AlertCircle className="h-5 w-5 text-amber-400 mt-0.5" />
-          <div>
-            <h3 className="font-medium text-amber-200">Bank Feed Integration Coming Soon</h3>
-            <p className="text-sm text-amber-300 mt-1">
-              Direct bank feed integration is a future enhancement. For now, all transactions are manually entered.
-              We're working on connecting your bank accounts to automatically import transactions.
-            </p>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Recent Transactions */}
         <div className="bg-slate-800 border border-slate-700 rounded-lg p-4">
           <div className="flex items-center justify-between mb-4">
@@ -209,8 +228,10 @@ const Dashboard = () => {
                 <p className="text-sm">Add transactions to see category breakdown</p>
               </div>
             )}
+          </div>
         </div>
-      </div>
+        </>
+      )}
     </div>
   );
 };

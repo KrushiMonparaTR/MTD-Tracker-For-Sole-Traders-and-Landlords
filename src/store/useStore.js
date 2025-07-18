@@ -538,43 +538,23 @@ const useStore = create((set, get) => ({
   deleteBusiness: (businessId) => {
     const { businesses, currentBusinessId } = get();
     const updatedBusinesses = businesses.filter(business => business.id !== businessId);
-    set({ 
-      businesses: updatedBusinesses,
-      currentBusinessId: currentBusinessId === businessId ? (updatedBusinesses[0]?.id || null) : currentBusinessId
-    });
     
-    // Save to localStorage in demo mode
-    if (DEMO_MODE) {
-      localStorage.setItem('mtd-businesses', JSON.stringify(updatedBusinesses));
-      // Also clean up business-specific transaction data
-      localStorage.removeItem(`mtd-transactions-${businessId}`);
+    // If deleting the current business, switch to another one or clear selection
+    let newCurrentBusinessId = currentBusinessId;
+    if (currentBusinessId === businessId) {
+      newCurrentBusinessId = updatedBusinesses.length > 0 ? updatedBusinesses[0].id : null;
     }
-  },
-
-  // Get businesses by type
-  getBusinessesByType: (businessType) => {
-    const { businesses } = get();
-    return businesses.filter(b => b.type === businessType);
-  },
-
-  // Get current business
-  getCurrentBusiness: () => {
-    const { businesses, currentBusinessId } = get();
-    return businesses.find(b => b.id === currentBusinessId) || null;
-  },
-
-  deleteBusiness: (businessId) => {
-    const { businesses, currentBusinessId } = get();
-    const updatedBusinesses = businesses.filter(business => business.id !== businessId);
+    
     set({ 
       businesses: updatedBusinesses,
-      currentBusinessId: currentBusinessId === businessId ? (updatedBusinesses[0]?.id || null) : currentBusinessId
+      currentBusinessId: newCurrentBusinessId,
+      transactions: newCurrentBusinessId ? get().transactions : [] // Clear transactions if no business selected
     });
     
     // Save to localStorage in demo mode
     if (DEMO_MODE) {
       localStorage.setItem('mtd-businesses', JSON.stringify(updatedBusinesses));
-      // Also clean up business-specific transaction data
+      // Clean up business-specific transaction data
       localStorage.removeItem(`mtd-transactions-${businessId}`);
     }
   },

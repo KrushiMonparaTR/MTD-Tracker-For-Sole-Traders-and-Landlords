@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { User, Building, Plus, Settings, Calendar, CheckCircle, Edit, Trash2, MoreVertical } from 'lucide-react';
+import { User, Building, Plus, Settings, Calendar, CheckCircle, Edit, Trash2, MoreVertical, LogOut } from 'lucide-react';
 import useStore from '../../store/useStore';
 import AddBusinessForm from './AddBusinessForm';
 import EditBusinessForm from './EditBusinessForm';
@@ -11,7 +11,8 @@ const BusinessManager = ({ onSelectBusiness }) => {
     currentBusinessId, 
     selectBusiness, 
     deleteBusiness, 
-    getBusinessesByType 
+    getBusinessesByType,
+    signOut
   } = useStore();
   const [showAddForm, setShowAddForm] = useState(false);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -35,11 +36,6 @@ const BusinessManager = ({ onSelectBusiness }) => {
 
   const handleDeleteBusiness = (business, event) => {
     event.stopPropagation();
-    
-    if (businesses.length === 1) {
-      alert('You cannot delete your last business. You must have at least one business.');
-      return;
-    }
 
     const confirmMessage = `Are you sure you want to delete "${business.name}"?\n\nThis will permanently delete:\n- The business settings\n- All transactions for this business\n\nThis action cannot be undone.`;
     
@@ -67,6 +63,12 @@ const BusinessManager = ({ onSelectBusiness }) => {
     return calendarElection ? '1 Jan - 31 Dec' : '6 Apr - 5 Apr';
   };
 
+  const handleSignOut = () => {
+    if (window.confirm('Are you sure you want to sign out?')) {
+      signOut();
+    }
+  };
+
   // Close dropdown when clicking outside
   React.useEffect(() => {
     const handleClickOutside = () => {
@@ -82,13 +84,22 @@ const BusinessManager = ({ onSelectBusiness }) => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900">
       {/* Navigation Header */}
-      <div className="flex items-center justify-center p-4 border-b border-slate-700">
+      <div className="flex items-center justify-between p-4 border-b border-slate-700">
         <div className="flex items-center space-x-3">
           <div className="bg-white p-2 rounded-lg shadow-lg">
             <Building className="h-6 w-6 text-blue-600" />
           </div>
           <h1 className="text-xl font-bold text-white">MTD Transaction Tracker</h1>
         </div>
+        
+        {/* Sign Out Button */}
+        <button
+          onClick={handleSignOut}
+          className="flex items-center space-x-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </button>
       </div>
 
       <div className="flex items-center justify-center p-4">
