@@ -281,7 +281,7 @@ const AddBusinessForm = ({ isOpen, onClose, businessType = null }) => {
                   <div className="flex-1">
                     <div className="font-medium text-slate-200">Calendar Year</div>
                     <div className="text-sm text-slate-300 mt-1">
-                      1 January - 31 December (requires HMRC approval for first use)
+                      1 April - 31 March (requires HMRC approval for first use)
                     </div>
                   </div>
                 </div>
